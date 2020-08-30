@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container" id="app">
+        <div class="row justify-content-end mt-3 mb-3">
+            <div class="col-2">
+                <button type="button" class="btn btn-primary" v-on:click="openModal('new')">
+                    建立新產品
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th scope="col" width="120">分類</th>
+                        <th scope="col">產品名稱</th>
+                        <th scope="col" width="120">原價</th>
+                        <th scope="col" width="120">售價</th>
+                        <th scope="col" width="120">是否啟用</th>
+                        <th scope="col" width="180">編輯</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item,idx) in products" :key="item.id">
+                        <td>{{idx+1}}</td>
+                        <td>{{item.category}}</td>
+                        <td>{{item.title}}</td>
+                        <td>{{item.origin_price}}</td>
+                        <td>{{item.price}}</td>
+                        <td v-if="item.enabled" class="text-success">啟用</td>
+                        <td v-else class="text-danger">未啟用</td>
+                        <td>
+                            <!--click事件，綁定openModal方法，並帶入參數。openModal方法會依據參數開啟不同的Modal，或是判斷是否仔入資料-->
+                            <button type="button" class="btn btn-sm btn-outline-warning"
+                                @click="openModal('edit',item)">編輯</button>
+                            <!--click事件，綁定openModal方法，並帶入參數。openModal方法會依據參數開啟不同的Modal，或是判斷是否仔入資料-->
+                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                @click="openModal('delete',item)">刪除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!--分頁的元件，透過prop下傳資料，下傳的資料是pagination，一個物件型態，包含目前分頁與總頁面數
+          @emit-pages，為子元件發送事件到父元件，觸發父元件的getProducts方法。
+          其子元件發送事件時所戴的參數，會自動帶到父元件的getProducts的參數當中。-->
+        <pagination :pages="pagination" @emit-pages="getProducts"></pagination>
+
+        <!-- Modal -->
+        <!--用來新增或編輯的元件，下傳資料 status、isNew與user
+          並在該元件給ref的屬性，以便父元件直接操作該元件的資料與方法
+          子元件發送事件(update)觸發父元件的getProducts -->
+        <product-modal ref="productModel" :status="status" :is-new="isNew" :user="user" @update="getProducts"></product-modal>
+        <!--刪除的元件，下傳資料tempProduct、user
+          子元件發送事件(update)觸發父元件的getProducts
+      -->
+      <del-product-modal :temp-product="tempProduct" :user="user" @update="getProducts"></del-product-modal>
+    </div>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- 刪除元件建立 -->
+    <script src="./js/delProductModal.js"></script>
+    <!-- 產品元件建立 -->
+    <script src="./js/productModal.js"></script>
+    <!-- 分頁元件建立 -->
+    <script src="./js/pagination.js"></script>
+    <!-- 主要 JS -->
+    <script src="./js/all.js"></script>
+</body>
+
+</html>
